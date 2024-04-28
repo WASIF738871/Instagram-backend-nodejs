@@ -4,72 +4,71 @@ import validator from 'validator';
 
 import { paginate, docList, toJSON } from './plugins/index.js';
 import { cryptoUtils } from '../utils/index.js';
+import { Profile } from './index.js';
 
-const userSchema = new mongoose.Schema(
-  {
-    firstName: {
-      type: String,
-      required: [true, 'fist_name is required'],
-      trim: true,
-    },
-    lastName: {
-      type: String,
-      trim: true,
-    },
-    email: {
-      type: String,
-      required: [true, 'email is required'],
-      unique: true,
-      trim: true,
-      lowercase: true,
-      // match: [/^\S+@\S+\.\S+$/, 'email is invalid'],
-      validate: [validator.isEmail, 'email is invalid'],
-    },
-    password: {
-      type: String,
-      required: [true, 'Please provide password.'],
-      minlength: [8, 'Password length must be greater or equal 8'],
-      maxlength: [15, 'Max assword length must be lesser or equal 15'],
-      private: true, // used by the toJSON plugin
-    },
-    confirmPassword: {
-      type: String,
-      required: [true, 'Please confirm password.'],
-      validate: {
-        // This only works on SAVE!
-        validator: function (value) {
-          return value === this.password;
-        },
-        message: 'Confirm password does not match',
+const userSchema = new mongoose.Schema({
+  firstName: {
+    type: String,
+    required: [true, 'fist_name is required'],
+    trim: true,
+  },
+  lastName: {
+    type: String,
+    trim: true,
+  },
+  email: {
+    type: String,
+    required: [true, 'email is required'],
+    unique: true,
+    trim: true,
+    lowercase: true,
+    // match: [/^\S+@\S+\.\S+$/, 'email is invalid'],
+    validate: [validator.isEmail, 'email is invalid'],
+  },
+  password: {
+    type: String,
+    required: [true, 'Please provide password.'],
+    minlength: [8, 'Password length must be greater or equal 8'],
+    maxlength: [15, 'Max assword length must be lesser or equal 15'],
+    private: true, // used by the toJSON plugin
+  },
+  confirmPassword: {
+    type: String,
+    required: [true, 'Please confirm password.'],
+    validate: {
+      // This only works on SAVE!
+      validator: function (value) {
+        return value === this.password;
       },
-    },
-    profileImage: {
-      type: String,
-      default: 'default.jpg',
-    },
-    isEmailVerified: {
-      type: String,
-      default: false,
-    },
-    role: {
-      type: String,
-      enum: ['user', 'guide', 'lead-guide', 'admin'],
-      default: 'user',
-    },
-    changedPasswordAt: Date,
-    passwordResetToken: String,
-    passwordResetExpires: Date,
-    active: {
-      type: Boolean,
-      default: true,
-      private: true,
-    },
-    createdAt: {
-      type: Date,
-      default: Date.now,
+      message: 'Confirm password does not match',
     },
   },
-);
+  profileImage: {
+    type: String,
+    default: 'default.jpg',
+  },
+  isEmailVerified: {
+    type: String,
+    default: false,
+  },
+  role: {
+    type: String,
+    enum: ['user', 'guide', 'lead-guide', 'admin'],
+    default: 'user',
+  },
+  changedPasswordAt: Date,
+  passwordResetToken: String,
+  passwordResetExpires: Date,
+  active: {
+    type: Boolean,
+    default: true,
+    private: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
 // add plugin that converts mongoose to json
 userSchema.plugin(toJSON);
@@ -82,6 +81,11 @@ userSchema.pre('save', async function (next) {
     this.password = await bcrypt.hash(this.password, 10);
     this.confirmPassword = undefined;
   }
+  next();
+});
+
+userSchema.pre('save', async function (next) {
+  await Profile.create({ user: this.id });
   next();
 });
 

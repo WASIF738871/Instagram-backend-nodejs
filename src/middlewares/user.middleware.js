@@ -25,12 +25,12 @@ const getMe = catchAsync((req, res, next) => {
 
 const resizePorfileImage = catchAsync(async (req, res, next) => {
   if (req.file) {
-    req.file.filename = `user-${req.user.id}-${Date.now()}.jpeg`;
+    req.body.profileImage = `user-${req.user.id}-${Date.now()}.jpeg`;
     await sharp(req.file.buffer)
       .resize(500, 500)
       .toFormat('jpeg')
       .jpeg({ quality: 90 })
-      .toFile(`uploads/${req.file.filename}`);
+      .toFile(`uploads/${req.body.profileImage}`);
   }
   next();
 });

@@ -7,10 +7,7 @@ const profileSchema = new mongoose.Schema({
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User',
     required: true,
-  },
-  profileImage: {
-    type: String,
-    default: 'default_profile_image.jpg',
+    unique: true,
   },
   coverImage: {
     type: String,
@@ -31,10 +28,10 @@ profileSchema.plugin(paginate);
 profileSchema.plugin(docList);
 
 // Add middleware to the schema for populating data
-profileSchema.pre('save', function (next) {
+profileSchema.pre(/^findOne/, function (next) {
   this.populate({
     path: 'user',
-    select: 'firstName lastName email',
+    select: '-_id firstName lastName email',
   });
   next();
 });

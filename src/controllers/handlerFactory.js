@@ -29,8 +29,6 @@ const updateOne = (Model, ...fieldsToBeUpdated) =>
   catchAsync(async (req, res) => {
     const { id } = req.params;
     const body = pick(req.body, fieldsToBeUpdated);
-    if (req.file) body.profileImage = req.file.filename;
-
     checkValidObjectId(id);
     await checkDocExists(Model, id)();
     const updateDoc = await Model.findByIdAndUpdate(id, body, {

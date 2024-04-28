@@ -15,7 +15,7 @@ const createUser = (req, res) => {
 
 const getAllUsers = factory.getAll(User, 'firstName', 'lastName', 'email');
 const retrieveUser = factory.getOne(User);
-const updateMe = factory.updateOne(User, 'firstName', 'lastName', 'email');
+const updateMe = factory.updateOne(User, 'firstName', 'lastName', 'email', 'profileImage');
 const updateUser = factory.updateOne(User, 'firstName', 'lastName', 'email');
 const deleteUser = factory.deleteOne(User);
 
