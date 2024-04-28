@@ -2,9 +2,7 @@ import mongoose from 'mongoose';
 import bcrypt from 'bcrypt';
 import validator from 'validator';
 
-import paginate from './plugins/paginate.plugin.js';
-import toJSON from './plugins/toJSON.plugin.js';
-import docList from './plugins/docList.plugin.js';
+import { paginate, docList, toJSON } from './plugins/index.js';
 import { cryptoUtils } from '../utils/index.js';
 
 const userSchema = new mongoose.Schema(

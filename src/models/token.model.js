@@ -1,6 +1,5 @@
 import mongoose from 'mongoose';
-import toJSON from './plugins/toJSON.plugin.js';
-import paginate from './plugins/paginate.plugin.js';
+import { paginate, docList, toJSON } from './plugins/index.js';
 import { tokenTypes } from '../config/index.js';
 
 const tokenSchema = new mongoose.Schema(
@@ -33,6 +32,7 @@ const tokenSchema = new mongoose.Schema(
 // add plugin that converts mongoose to json
 tokenSchema.plugin(toJSON);
 tokenSchema.plugin(paginate);
+tokenSchema.plugin(docList);
 
 const Token = mongoose.model('Token', tokenSchema);
 
